@@ -6,9 +6,10 @@ import json
 from functools import reduce
 from stopwords import stopwords
 
-import nltk
+
 
 MAX_FILE_NBR = 10
+REPLACE_SYMBOLS = [ ".", ",", ":", ";", "!", "?", "(", ")", "\"", "-", " - ", "--", "'", "*", "`" ]
 
 reg1 = re.compile(r"\[([^\(\)])+\]\(http([^\(\)])+\)")
 reg2 = re.compile(r"\[([^\(\)])+\]: http([^\s])+\.html")
@@ -18,10 +19,13 @@ reg4 = re.compile(r"…")
 
 
 def get_string_tokens(string: str) -> list:
-    tokens = nltk.word_tokenize(string.lower())
+    lower_string = string.lower()
+    for symbol in REPLACE_SYMBOLS:
+        lower_string = lower_string.replace(symbol, " ")
+
+    tokens = lower_string.split(" ")
     tokens = list(filter(lambda t: t not in stopwords, tokens))
-    tokens = nltk.pos_tag(tokens)
-    tokens = list(filter(lambda t: t[1].isalpha(), tokens))
+    tokens = list(filter(lambda t: t != "", tokens))
 
     return tokens
 
