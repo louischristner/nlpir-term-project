@@ -3,16 +3,14 @@ import re
 import sys
 import json
 
-from numpy import dot
-from math import log, log2
-from numpy.linalg import norm
-
 from functools import reduce
 from stopwords import stopwords
 
+from models.boolean_model import get_inverted_index_posting_list, get_query_bool_vector
+from models.vector_space_model import get_term_document_weight_matrix, get_query_weight_vector, get_ranked_documents
 
 
-MAX_FILE_NBR = 10
+MAX_FILE_NBR = 100
 REPLACE_SYMBOLS = [ ".", ",", ":", ";", "!", "?", "(", ")", "\"", "-", " - ", "--", "'", "*", "`", "=", "&", "_" ]
 
 reg1 = re.compile(r"\[([^\(\)])+\]\(http([^\(\)])+\)")
@@ -108,46 +106,6 @@ def get_clean_books_data(folder_name: str) -> tuple[list[dict], list[str]]:
     return books_data, sorted(set(books_words))
 
 
-def get_inverted_index_posting_list(books_data: list[dict]):
-    posting_list: dict[str, list[tuple[int, int]]] = {}
-
-    for index in range(len(books_data)):
-        book_data = books_data[index]
-        for token in book_data["tokens"]:
-            if not token in posting_list:
-                posting_list[token] = list()
-            posting_list[token].append((index, book_data["tokens"][token]))
-
-    return posting_list
-
-
-def get_term_document_weight_matrix(books_data: list[dict], words: list[str]):
-    documents: list[list[float]] = []
-    books_amount = len(books_data)
-    words_amount = len(words)
-
-    documents = [None] * books_amount
-
-    for index in range(books_amount):
-        documents[index] = [0.0] * words_amount
-        for word_index in range(words_amount):
-            tf, df = 0, 0
-            word = words[word_index]
-            book_tokens = books_data[index]["tokens"]
-
-            if word in book_tokens:
-                tf = 1 + log(book_tokens[word])
-
-                for book_data in books_data:
-                    if word in book_data["tokens"].keys():
-                        df += 1
-
-                weight = tf * log2(books_amount / df)
-                documents[index][word_index] = weight
-
-    return documents
-
-
 if __name__ == "__main__":
     if len(sys.argv) >= 2:
         folder_name = sys.argv[1]
@@ -155,10 +113,13 @@ if __name__ == "__main__":
         posting_list = get_inverted_index_posting_list(books_data)
         documents = get_term_document_weight_matrix(books_data, words)
 
-        for token in posting_list:
-            print(posting_list[token])
+        bool_query_docs = get_query_bool_vector("dinosaurs", words, posting_list)
 
-        for document in documents:
-            print(document)
+        query_weight_vector = get_query_weight_vector("dinosaurs", documents, words, books_data)
+        documents_cos_sin = get_ranked_documents(documents, query_weight_vector)
 
+        print(bool_query_docs)
+        for doc_name in documents_cos_sin:
+            if documents_cos_sin[doc_name] > 0.0:
+                print(doc_name, documents_cos_sin[doc_name])
 
