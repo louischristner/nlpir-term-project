@@ -3,6 +3,10 @@ import re
 import sys
 import json
 
+from numpy import dot
+from math import log, log2
+from numpy.linalg import norm
+
 from functools import reduce
 from stopwords import stopwords
 
@@ -68,8 +72,9 @@ def get_book_tokens(book: dict, book_description: str) -> dict:
     return book_tokens
 
 
-def get_clean_books_data(folder_name: str) -> list[dict]:
+def get_clean_books_data(folder_name: str) -> tuple[list[dict], list[str]]:
     books_data = []
+    books_words = []
 
     files_name = os.listdir(folder_name)
     for index in range(len(files_name)):
@@ -89,6 +94,8 @@ def get_clean_books_data(folder_name: str) -> list[dict]:
                 book_authors = [ author["author"]["key"] for author in book["authors"] ]
                 book_tokens = get_book_tokens(book, book_description)
 
+                books_words += book_tokens.keys()
+
                 books_data.append({
                     "key": book["key"],
                     "title": book["title"],
@@ -98,7 +105,7 @@ def get_clean_books_data(folder_name: str) -> list[dict]:
                     "tokens": book_tokens
                 })
 
-    return books_data
+    return books_data, sorted(set(books_words))
 
 
 def get_inverted_index_posting_list(books_data: list[dict]):
@@ -114,13 +121,44 @@ def get_inverted_index_posting_list(books_data: list[dict]):
     return posting_list
 
 
+def get_term_document_weight_matrix(books_data: list[dict], words: list[str]):
+    documents: list[list[float]] = []
+    books_amount = len(books_data)
+    words_amount = len(words)
+
+    documents = [None] * books_amount
+
+    for index in range(books_amount):
+        documents[index] = [0.0] * words_amount
+        for word_index in range(words_amount):
+            tf, df = 0, 0
+            word = words[word_index]
+            book_tokens = books_data[index]["tokens"]
+
+            if word in book_tokens:
+                tf = 1 + log(book_tokens[word])
+
+                for book_data in books_data:
+                    if word in book_data["tokens"].keys():
+                        df += 1
+
+                weight = tf * log2(books_amount / df)
+                documents[index][word_index] = weight
+
+    return documents
+
+
 if __name__ == "__main__":
     if len(sys.argv) >= 2:
         folder_name = sys.argv[1]
-        books_data = get_clean_books_data(folder_name)
+        books_data, words = get_clean_books_data(folder_name)
         posting_list = get_inverted_index_posting_list(books_data)
+        documents = get_term_document_weight_matrix(books_data, words)
 
         for token in posting_list:
             print(posting_list[token])
+
+        for document in documents:
+            print(document)
 
 
