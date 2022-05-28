@@ -1,12 +1,11 @@
+import os
 import json
 import requests
-
-MAX_NBR_WORKS = 1000
 
 # get work keys through subject call
 def get_work_keys():
     offset = 0
-    nbr_works = 16432 if 16432 < MAX_NBR_WORKS else MAX_NBR_WORKS
+    nbr_works = 1000
 
     with open('work_keys.txt', "w") as outfile:
         while True:
@@ -20,13 +19,13 @@ def get_work_keys():
             offset += len(work_keys)
 
 # get work data using stored work keys
-def get_work_data():
-    index = 0
+def get_work_data(folder_name: str):
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
 
     with open('work_keys.txt', "r") as infile:
-        while True:
+        for work_key in infile:
             book = {}
-            work_key = infile.readline()
             work_key = work_key[:-1]
             result = requests.get('https://openlibrary.org' + work_key + ".json").json()
 
@@ -37,11 +36,8 @@ def get_work_data():
             book["subjects"] = result["subjects"] if "subjects" in result else ""
             book["description"] = result["description"] if "description" in result else ""
 
-            with open('books/' + work_key[7:] + '.json', "w") as outfile:
+            file_path = os.path.join(folder_name, work_key[7:] + ".json")
+
+            with open(file_path, "w") as outfile:
                 json.dump(book, outfile)
-
-            index += 1
-
-if __name__ == "__main__":
-    # get_work_keys()
-    get_work_data()
+                print(book["title"])

@@ -24,8 +24,8 @@ def get_documents_from_terms(query_terms: list[str], words: list[str], posting_l
 
 
 def get_query_bool_vector(query: str, words: list[str], posting_list: dict[str, list[tuple[int, int]]]):
-    query_documents: list[int] = []
-    query_terms = query.split(" ")
+    query_documents: list[tuple[int, int]] = []
+    query_terms = query.lower().split(" ")
     query_len = len(query_terms)
 
     # AND only

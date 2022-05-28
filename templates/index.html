@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Index Page</title>
+    <style>
+        html, body {
+            padding: 0;
+            margin: 0;
+        }
+
+        #app-info {
+            text-align: center;
+        }
+
+        #book-form {
+            text-align: center;
+            margin-bottom: 2em;
+        }
+
+        #book-form input {
+            width: 15em;
+        }
+
+        #spin-loader div {
+            margin: auto;
+            margin-bottom: 1em;
+        }
+
+        #book-list {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        img {
+            margin: auto;
+            display: block;
+        }
+
+        .book-title {
+            text-align: center;
+            font-weight: bold;
+            font-style: italic;
+            padding-left: 1em;
+            padding-right: 1em;
+            margin-bottom: 1em;
+        }
+
+        .loader {
+            border: 8px solid #f3f3f3; /* Light grey */
+            border-top: 8px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="app-info">
+        <h1>NLPIR - Term Project</h1>
+        <p>Search for science fiction books based on user input.</p>
+    </div>
+
+    <form id="book-form" method="post">
+        <input type="text" id="query" name="query" placeholder="query"><br><br>
+        <input id="submit-button" type="submit" value="Search">
+    </form>
+
+    <div id="spin-loader" hidden>
+        <div class="loader"></div>
+    </div>
+
+    <div id="book-list">
+        {% for book_info in books_infos %}
+            <div>
+                <img width="200" height="300" src="https://covers.openlibrary.org/b/id/{{ book_info.covers[0] }}-M.jpg">
+                <p class="book-title">{{ book_info.title }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        document.getElementById("submit-button").addEventListener('click', () => {
+            document.getElementById("spin-loader").hidden = false;
+        });
+    </script>
+</body>
+</html>

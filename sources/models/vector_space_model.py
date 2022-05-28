@@ -60,7 +60,12 @@ def get_query_weight_vector(query: str, documents: list[list[float]], words: lis
 
 
 def cosine_similarity(vector1: list[float], vector2: list[float]):
-    return dot(vector1, vector2) / (norm(vector1) * norm(vector2))
+    norm_vec1 = norm(vector1)
+    norm_vec2 = norm(vector2)
+    dot_vec = dot(vector1, vector2)
+    mul_norm_vec = norm_vec1 * norm_vec2
+
+    return dot_vec / mul_norm_vec
 
 
 def get_ranked_documents(documents: list[list[float]], query_weight_vector: list[float]) -> dict[int, float]:
@@ -71,3 +76,7 @@ def get_ranked_documents(documents: list[list[float]], query_weight_vector: list
         documents_cos_sin[doc_index] = cosine_similarity(document, query_weight_vector)
 
     return dict(sorted(documents_cos_sin.items(), key=lambda item: item[1], reverse=True))
+
+def get_vector_space_model_result(query: str, documents: list[list[float]], words: list[str], books_data: list[dict]) -> dict[int, float]:
+    query_weight_vector = get_query_weight_vector(query, documents, words, books_data)
+    return get_ranked_documents(documents, query_weight_vector)
