@@ -24,26 +24,40 @@ documents = get_term_document_weight_matrix(books_data, words)
 
 # Flask
 
-app = Flask(__name__)
+def create_app(test_config=None):
+    app = Flask(__name__, instance_relative_config=True)
+    app.config.from_mapping(SECRET_KEY="dev")
 
-@app.route("/", methods=["POST", "GET"])
-def index():
-    books_infos = []
+    if test_config is None:
+        app.config.from_pyfile("config.py", silent=True)
+    else:
+        app.config.from_mapping(test_config)
 
-    if request.method == "POST":
-        query = request.form["query"]
+    try:
+        os.makedirs(app.instance_path)
+    except OSError:
+        pass
 
-        if query_is_valid(query, words):
-            with concurrent.futures.ThreadPoolExecutor() as executor:
-                bool_thread_result = executor.submit(get_query_bool_vector, query, words, posting_list)
-                vect_thread_result = executor.submit(get_vector_space_model_result, query, documents, words, books_data)
+    @app.route("/", methods=["POST", "GET"])
+    def index():
+        books_infos = []
 
-                bool_query_docs = bool_thread_result.result()
-                documents_cos_sin = vect_thread_result.result()
+        if request.method == "POST":
+            query = request.form["query"]
 
-                documents_rank = get_final_documents_rank(bool_query_docs, documents_cos_sin)
+            if query_is_valid(query, words):
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    bool_thread_result = executor.submit(get_query_bool_vector, query, words, posting_list)
+                    vect_thread_result = executor.submit(get_vector_space_model_result, query, documents, words, books_data)
 
-                for doc in documents_rank:
-                    books_infos.append(books_data[doc[0]])
+                    bool_query_docs = bool_thread_result.result()
+                    documents_cos_sin = vect_thread_result.result()
 
-    return render_template('index.html', books_infos=books_infos)
+                    documents_rank = get_final_documents_rank(bool_query_docs, documents_cos_sin)
+
+                    for doc in documents_rank:
+                        books_infos.append(books_data[doc[0]])
+
+        return render_template('index.html', books_infos=books_infos)
+
+    return app

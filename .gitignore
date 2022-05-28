@@ -1,4 +1,6 @@
 venv/
 books/
 __pycache__/
+app.egg-info/
+dist/
 *.csv

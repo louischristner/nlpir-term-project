@@ -1,5 +1,6 @@
 import os
 import json
+import logging
 import requests
 
 # get work keys through subject call
@@ -39,5 +40,5 @@ def get_work_data(folder_name: str):
             file_path = os.path.join(folder_name, work_key[7:] + ".json")
 
             with open(file_path, "w") as outfile:
+                logging.info(book["title"])
                 json.dump(book, outfile)
-                print(book["title"])

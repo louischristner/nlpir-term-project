@@ -6,5 +6,5 @@ venv/bin/python3 -m pip install --upgrade pip
 pip install requests
 pip install numpy
 pip install Flask
-export FLASK_APP=app
-flask run
+pip install wheel
+python setup.py bdist_wheel

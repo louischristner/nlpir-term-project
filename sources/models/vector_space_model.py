@@ -65,6 +65,9 @@ def cosine_similarity(vector1: list[float], vector2: list[float]):
     dot_vec = dot(vector1, vector2)
     mul_norm_vec = norm_vec1 * norm_vec2
 
+    if mul_norm_vec <= 0.0:
+        return 0.0
+
     return dot_vec / mul_norm_vec
 
 
