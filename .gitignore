@@ -4,3 +4,4 @@ __pycache__/
 app.egg-info/
 dist/
 *.csv
+.vercel

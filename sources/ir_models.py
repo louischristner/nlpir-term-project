@@ -82,6 +82,7 @@ def get_clean_books_data(folder_name: str, stopwords: list[str], max_file_nbr: i
                     if isinstance(book["description"], str) \
                     else book["description"]["value"]
 
+                book_cover = book["covers"][0] if isinstance(book["covers"], list) else ""
                 book_authors = [ author["author"]["key"] for author in book["authors"] ]
                 book_tokens = get_book_tokens(book, book_description, stopwords)
 
@@ -89,9 +90,9 @@ def get_clean_books_data(folder_name: str, stopwords: list[str], max_file_nbr: i
 
                 books_data.append({
                     "key": book["key"],
+                    "cover": book_cover,
                     "title": book["title"],
                     "authors": book_authors,
-                    "covers": book["covers"],
                     "subjects": book["subjects"],
                     "description": book_description,
                     "tokens": book_tokens

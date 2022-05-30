@@ -78,7 +78,7 @@
     <div id="book-list">
         {% for book_info in books_infos %}
             <div>
-                <img width="200" height="300" src="https://covers.openlibrary.org/b/id/{{ book_info.covers[0] }}-M.jpg">
+                <img width="200" height="300" src="https://covers.openlibrary.org/b/id/{{ book_info.cover }}-M.jpg">
                 <p class="book-title">{{ book_info.title }}</p>
             </div>
         {% endfor %}
