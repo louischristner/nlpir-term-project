@@ -44,11 +44,16 @@ def get_book_subjects_tokens(subjects: list[str], stopwords: list[str]) -> list:
     return get_string_tokens(subjects_str, stopwords)
 
 
+def get_book_title_tokens(title: str, stopwords: list[str]) -> list:
+    return get_string_tokens(title, stopwords)
+
+
 def get_book_tokens(book: dict, book_description: str, stopwords: list[str]) -> dict:
     book_tokens = {}
 
     book_description_tokens = get_book_description_tokens(book_description, stopwords)
     book_subjects_tokens = get_book_subjects_tokens(book["subjects"], stopwords)
+    book_title_tokens = get_book_title_tokens(book["title"], stopwords)
 
     for token in book_description_tokens:
         if not token in book_tokens:
@@ -56,6 +61,11 @@ def get_book_tokens(book: dict, book_description: str, stopwords: list[str]) -> 
         else: book_tokens[token] += 1
 
     for token in book_subjects_tokens:
+        if not token in book_tokens:
+            book_tokens[token] = 1
+        else: book_tokens[token] += 1
+
+    for token in book_title_tokens:
         if not token in book_tokens:
             book_tokens[token] = 1
         else: book_tokens[token] += 1

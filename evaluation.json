@@ -1,0 +1,77 @@
+{
+    "boolean_model": {
+        "mean_average_precision_1": 0.9225700769818419,
+        "mean_average_precision_2": 0.8440854037603266,
+        "list": [
+            "Fragment",
+            "Letters from Atlantis",
+            "Miss Peregrine's Home for Peculiar Children",
+            "The Island Stallion Races",
+            "An Antarctic Mystery",
+            "R.U.R",
+            "Island of Dr. Moreau",
+            "L'Île mystérieuse",
+            "Broken Crowns (Internment Chronicles)",
+            "Green boy",
+            "Concrete island",
+            "A grey moon over China",
+            "The Survivors Club",
+            "The Overlord Protocol",
+            "Envy",
+            "The fountains of paradise",
+            "The Island Of Excess Love",
+            "The sandcastle empire",
+            "The Outsider"
+        ]
+    },
+    "vector_space_model": {
+        "mean_average_precision_1": 0.7061188811188812,
+        "mean_average_precision_2": 0.6474914490394367,
+        "list": [
+            "The Island Stallion Races",
+            "Fragment",
+            "The Survivors Club",
+            "Island of Dr. Moreau",
+            "Concrete island",
+            "Letters from Atlantis",
+            "The sandcastle empire",
+            "Miss Peregrine's Home for Peculiar Children",
+            "The Outsider",
+            "L'Île mystérieuse",
+            "Green boy",
+            "An Antarctic Mystery",
+            "A grey moon over China",
+            "The Overlord Protocol",
+            "The fountains of paradise",
+            "R.U.R",
+            "Broken Crowns (Internment Chronicles)",
+            "The Island Of Excess Love",
+            "Envy"
+        ]
+    },
+    "combined_models": {
+        "mean_average_precision_1": 0.9402882205513784,
+        "mean_average_precision_2": 0.8513539607966851,
+        "list": [
+            "Fragment",
+            "Letters from Atlantis",
+            "The Island Stallion Races",
+            "Miss Peregrine's Home for Peculiar Children",
+            "Island of Dr. Moreau",
+            "L'Île mystérieuse",
+            "An Antarctic Mystery",
+            "The Survivors Club",
+            "R.U.R",
+            "Concrete island",
+            "The sandcastle empire",
+            "The Outsider",
+            "Green boy",
+            "A grey moon over China",
+            "The Overlord Protocol",
+            "The fountains of paradise",
+            "Broken Crowns (Internment Chronicles)",
+            "The Island Of Excess Love",
+            "Envy"
+        ]
+    }
+}

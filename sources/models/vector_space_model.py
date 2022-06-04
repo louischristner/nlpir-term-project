@@ -80,6 +80,7 @@ def get_ranked_documents(documents: list[list[float]], query_weight_vector: list
 
     return dict(sorted(documents_cos_sin.items(), key=lambda item: item[1], reverse=True))
 
+
 def get_vector_space_model_result(query: str, documents: list[list[float]], words: list[str], books_data: list[dict]) -> dict[int, float]:
     query_weight_vector = get_query_weight_vector(query, documents, words, books_data)
     return get_ranked_documents(documents, query_weight_vector)
