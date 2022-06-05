@@ -8,7 +8,8 @@ from sources.stopwords import stopwords
 from sources.collect_data import get_work_data
 from sources.ir_models import get_clean_books_data
 from sources.query_utils import query_is_valid, get_final_documents_rank
-from sources.evaluation import get_precision_and_recall, get_mean_average_precision
+from sources.evaluation import get_mean_average_precision, get_normalized_discounted_cumulative_gain
+
 from sources.models.boolean_model import get_inverted_index_posting_list, get_query_bool_vector
 from sources.models.vector_space_model import get_term_document_weight_matrix, get_vector_space_model_result
 
@@ -47,14 +48,23 @@ RELEVANT_DOCUMENTS = [
     "The Island Of Excess Love"
 ]
 
+def evaluate_model_result(documents_rank: list, relevant_documents: list[str]):
+    retrieved_documents = [ books_data[doc[0]]["title"] for doc in documents_rank ]
+    get_mean_average_precision(retrieved_documents, relevant_documents)
+    get_normalized_discounted_cumulative_gain(retrieved_documents, relevant_documents)
+
 def evaluate_models(query: str, relevant_documents: list[str]):
     bool_query_docs = get_query_bool_vector(query, words, posting_list)
     documents_cos_sin = get_vector_space_model_result(query, documents, words, books_data)
+    documents_cos_sin_filtered = list(filter(lambda x: x[1] > 0.0, documents_cos_sin.items()))
     documents_rank = get_final_documents_rank(bool_query_docs, documents_cos_sin)
-    retrieved_documents = [ books_data[doc[0]]["title"] for doc in documents_rank ]
 
-    get_precision_and_recall(retrieved_documents, relevant_documents)
-    get_mean_average_precision(retrieved_documents, relevant_documents)
+    print("-- BOOLEAN MODEL --")
+    evaluate_model_result(bool_query_docs, relevant_documents)
+    print("-- VECTOR SPACE MODEL --")
+    evaluate_model_result(documents_cos_sin_filtered, relevant_documents)
+    print("-- COMBINED MODELS --")
+    evaluate_model_result(documents_rank, relevant_documents)
 
 evaluate_models("island", RELEVANT_DOCUMENTS)
 
